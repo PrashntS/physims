@@ -12,7 +12,7 @@ var Engine = Matter.Engine,
     MouseConstraint = Matter.MouseConstraint;
 
 // create a Matter.js engine
-var engine = Engine.create(document.body, {
+var engine = Engine.create(document.getElementById('viewport'), {
   render: {
     options: {
       showAngleIndicator: true,
