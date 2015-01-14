@@ -1,0 +1,11 @@
+--2015-01-12 00:24:31--  https://fonts.gstatic.com/s/raleway/v9/CcKI4k9un7TZVWzRVT-T8wzyDMXhdD8sAj6OAJTFsBI.woff2
+Resolving fonts.gstatic.com... 173.194.36.95, 173.194.36.88, 173.194.36.79, ...
+Connecting to fonts.gstatic.com|173.194.36.95|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 15120 (15K) [font/woff2]
+Saving to: 'CcKI4k9un7TZVWzRVT-T8wzyDMXhdD8sAj6OAJTFsBI.woff2'
+
+     0K .......... ....                                       100% 51.4K=0.3s
+
+2015-01-12 00:24:32 (51.4 KB/s) - 'CcKI4k9un7TZVWzRVT-T8wzyDMXhdD8sAj6OAJTFsBI.woff2' saved [15120/15120]
+
