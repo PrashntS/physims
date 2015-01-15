@@ -26,15 +26,10 @@ var engine = Engine.create(document.getElementById('viewport'), {
 var mouseConstraint = MouseConstraint.create(engine);
 World.add(engine.world, mouseConstraint);
 
-// add a stack to fall on to the catapult
-var stack = Composites.stack(20, 0, 1, 6, 0, 0, function(x, y, column, row) {
-    console.log(row);
-    return Bodies.rectangle(x, y, 30, 30, {friction: 0.9});
-});
-
 // create the catapult
-var catapult = Bodies.rectangle(250, 250, 246, 20, {
+var catapult = Bodies.rectangle(250, 250, 250, 20, {
     friction: 1,
+    restitution: 0,
     render: {
         sprite: {
             texture: 'assets/catapult.png'
@@ -42,20 +37,31 @@ var catapult = Bodies.rectangle(250, 250, 246, 20, {
     }
 });
 
+var position = {
+    left: {
+        1: 230,
+        2: 212,
+        3: 190,
+        4: 168,
+        5: 149
+    },
+    right: {
+        1: 270,
+        2: 292,
+        3: 190,
+        4: 168,
+        5: 149
+    }
+};
+
+
 // add bodies to the world
 World.add(engine.world, [
-    stack,
     catapult,
     Constraint.create({ bodyA: catapult, pointB: { x: 230, y: 300 }, stiffness: 2 }),
     Constraint.create({ bodyA: catapult, pointB: { x: 240, y: 300 }, stiffness: 2 }),
     Constraint.create({ bodyA: catapult, pointB: { x: 260, y: 300 }, stiffness: 2 }),
-    Constraint.create({ bodyA: catapult, pointB: { x: 270, y: 300 }, stiffness: 2 })
-]);
-
-// add some some walls to the world
-var offset = 10;
-World.add(engine.world, [
-    // top
+    Constraint.create({ bodyA: catapult, pointB: { x: 270, y: 300 }, stiffness: 2 }),
     Bodies.rectangle(250, 0, 500, 2, { isStatic: true }),
     // left
     Bodies.rectangle(500, 150, 2, 300, { isStatic: true }),
@@ -63,10 +69,14 @@ World.add(engine.world, [
     Bodies.rectangle(250, 300, 500, 2, { isStatic: true }),
     // right
     Bodies.rectangle(0, 150, 2, 300, { isStatic: true }),
+    Bodies.circle(position.left[1], 200, 8, { isStatic: false, friction: 1, restitution: 0.5 }),
+    Bodies.circle(position.right[1], 200, 8, { isStatic: false, friction: 1, restitution: 0.5 }),
 ]);
 
-// run the engine
 Engine.run(engine);
+
+
+
 
 Array.prototype.equals = function (array) {
     "use strict";
