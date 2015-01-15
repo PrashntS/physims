@@ -10,18 +10,25 @@
 </head>
 <body class="physim">
     <div class="container">
-        <h3>PhySim.</h3>
-        <h6>Under Construction</h6>
-        <div class="game">
-            <p>Where should this body be placed?</p>
-            <ol>
-                <li>Point 2</li>
-                <li>Point 5</li>
-                <li>Point 2</li>
-                <li>None of the Above</li>
-            </ol>
+        <h3>Balance It!</h3>
+        <div class="row">
+            <div class="four columns">
+                <div class="game">
+                    <p id="quest">Where should this body be placed?</p>
+                    <ol type="a">
+                        <li id="opt_0">Point 2</li>
+                        <li id="opt_1">Point 5</li>
+                        <li id="opt_2">Point 2</li>
+                        <li id="opt_3">None of the Above</li>
+                    </ol>
+                    <p id="answer"></p>
+                </div>
+                <button onclick="Game.generate_question();">Next</button>
+            </div>
+            <div class="six columns">
+                <div id="viewport"></div>
+            </div>
         </div>
-        <div id="viewport"></div>
     </div>
     <script src="vendor/jquery.min.js"></script>
     <script src="vendor/matter-0.8.0.js"></script>

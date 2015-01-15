@@ -15,7 +15,9 @@ var engine = Engine.create(document.getElementById('viewport'), {
             showAngleIndicator: true,
             showVelocity: true,
             showCollisions: true,
-            wireframes: false
+            wireframes: false,
+            width: 500,
+            height: 300
         }
     }
 });
@@ -25,14 +27,13 @@ var mouseConstraint = MouseConstraint.create(engine);
 World.add(engine.world, mouseConstraint);
 
 // add a stack to fall on to the catapult
-var stack = Composites.stack(20, 255, 1, 6, 0, 0, function(x, y, column, row) {
+var stack = Composites.stack(20, 0, 1, 6, 0, 0, function(x, y, column, row) {
     console.log(row);
     return Bodies.rectangle(x, y, 30, 30, {friction: 0.9});
 });
 
-
 // create the catapult
-var catapult = Bodies.rectangle(400, 520, 246, 20, {
+var catapult = Bodies.rectangle(250, 250, 246, 20, {
     friction: 1,
     render: {
         sprite: {
@@ -45,24 +46,23 @@ var catapult = Bodies.rectangle(400, 520, 246, 20, {
 World.add(engine.world, [
     stack,
     catapult,
-    Bodies.rectangle(280, 560, 20, 55, { isStatic: true }),
-    //Bodies.circle(560, 100, 50, { density: 0.005 }),
-    Constraint.create({ bodyA: catapult, pointB: { x: 370, y: 580 }, stiffness: 2 }),
-    Constraint.create({ bodyA: catapult, pointB: { x: 380, y: 580 }, stiffness: 2 }),
-    Constraint.create({ bodyA: catapult, pointB: { x: 430, y: 580 }, stiffness: 2 }),
-    Constraint.create({ bodyA: catapult, pointB: { x: 435, y: 580 }, stiffness: 2 }),
-    Constraint.create({ bodyA: catapult, pointB: { x: 385, y: 580 }, stiffness: 2 }),
-    Constraint.create({ bodyA: catapult, pointB: { x: 420, y: 580 }, stiffness: 2 })
+    Constraint.create({ bodyA: catapult, pointB: { x: 230, y: 300 }, stiffness: 2 }),
+    Constraint.create({ bodyA: catapult, pointB: { x: 240, y: 300 }, stiffness: 2 }),
+    Constraint.create({ bodyA: catapult, pointB: { x: 260, y: 300 }, stiffness: 2 }),
+    Constraint.create({ bodyA: catapult, pointB: { x: 270, y: 300 }, stiffness: 2 })
 ]);
 
 // add some some walls to the world
 var offset = 10;
 World.add(engine.world, [
-    //Body.create(20, 255, { bounds:  }),
-    Bodies.rectangle(400, -offset, 800 + 2 * offset, 50, { isStatic: true }),
-    Bodies.rectangle(400, 600 + offset, 800 + 2 * offset, 50, { isStatic: true }),
-    Bodies.rectangle(800 + offset, 300, 50, 600 + 2 * offset, { isStatic: true }),
-    Bodies.rectangle(-offset, 300, 50, 600 + 2 * offset, { isStatic: true })
+    // top
+    Bodies.rectangle(250, 0, 500, 2, { isStatic: true }),
+    // left
+    Bodies.rectangle(500, 150, 2, 300, { isStatic: true }),
+    // bottom
+    Bodies.rectangle(250, 300, 500, 2, { isStatic: true }),
+    // right
+    Bodies.rectangle(0, 150, 2, 300, { isStatic: true }),
 ]);
 
 // run the engine
@@ -105,12 +105,11 @@ Array.prototype.shuffle = function () {
         return this;
     }
     while (i) {
+        i -= 1;
         j = Math.floor(Math.random() * (i + 1));
         temp = this[i];
         this[i] = this[j];
         this[j] = temp;
-
-        i -= 1;
     }
     return this;
 };
@@ -144,6 +143,8 @@ var Game = {
     current: {
         level: 1,
         answer: undefined,
+        answer_id: undefined,
+        answer_str: undefined,
         question: undefined,
         question_str: undefined,
         type: undefined
@@ -174,6 +175,9 @@ var Game = {
             }
         }
 
+        if (out.length === 0) {
+            return Game.generate_question();
+        }
         Game.current.answer = out;
         return out;
     },
@@ -225,24 +229,85 @@ var Game = {
             Game.current.question_str = "Error";
         }
 
+        Game.current.options_str = Game.generate_answers_draw_question();
+
+        $("#answer").slideUp();
+
         return Game.current;
     },
 
-    generate_different_option: function (option) {
+    generate_different_option: function () {
         "use strict";
-        var b = [Game.positions.r(), Game.densities.r()];
-        if (option.equals(b)) {
-            return Game.generate_different_option(option);
+        var b = [Game.positions.r(), Game.densities.r()], dont_proceed = false, i;
+
+        for (i = 0; i < arguments.length; i += 1) {
+            dont_proceed = dont_proceed || b.equals(arguments[i]);
+        }
+
+        if (dont_proceed) {
+            return Game.generate_different_option(arguments);
         }
         return b;
     },
 
-    generate_answers: function () {
+    generate_answers_draw_question: function () {
         "use strict";
-        var ans = Game.current.answer;
+        var ans = Game.current.answer, opt_0, opt_1, opt_2, opt_3, options, i;
+        opt_0 = ans[0];
+        opt_1 = Game.generate_different_option(opt_0);
+        opt_2 = Game.generate_different_option(opt_0, opt_1);
+        opt_3 = Game.generate_different_option(opt_0, opt_1, opt_2);
+        options = [opt_0, opt_1, opt_2, opt_3].shuffle();
+
+        $("#quest").html(Game.current.question_str);
 
         if (Game.current.type === 1) {
-            // mcq
+            for (i = 0; i < 4; i += 1) {
+                $("#opt_" + i).html(JSON.stringify(options[i]));
+                if (options[i].equals(ans[0])) {
+                    Game.current.answer_id = "#opt_" + i;
+                    Game.current.answer_str = JSON.stringify(options[i]);
+                }
+            }
+        } else if (Game.current.type === 2) {
+            for (i = 0; i < 4; i += 1) {
+                $("#opt_" + i).html(options[i][0]);
+                if (options[i].equals(ans[0])) {
+                    Game.current.answer_id = "#opt_" + i;
+                    Game.current.answer_str = options[i][0];
+                }
+            }
         }
+        return options;
+    },
+
+    check_answer: function (id) {
+        "use strict";
+        if (id === Game.current.answer_id) {
+            $("#answer").text("Correct!");
+        } else {
+            $("#answer").text("Sorry, Correct Answer is " + Game.current.answer_str);
+        }
+        $("#answer").slideDown();
+    },
+
+    create_handler: function (id) {
+        "use strict";
+        $(id).click(function () {
+            Game.check_answer(id);
+        });
+    },
+
+    init: function () {
+        "use strict";
+        // attach click events:
+        var i;
+        for (i = 0; i < 4; i += 1) {
+            Game.create_handler("#opt_" + i);
+        }
+        // draw a question:
+        Game.generate_question();
     }
 };
+
+Game.init();
