@@ -68,21 +68,61 @@ World.add(engine.world, [
 // run the engine
 Engine.run(engine);
 
+Array.prototype.equals = function (array) {
+    "use strict";
+    if (!array) {
+        return false;
+    }
+
+    if (this.length !== array.length) {
+        return false;
+    }
+
+    var i, l;
+
+    for (i = 0, l = this.length; i < l; i += 1) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i])) {
+                return false;
+            }
+        } else if (this[i] !== array[i]) {
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;
+        }
+    }
+    return true;
+};
 Array.prototype.r = function () {
     "use strict";
     return this[Math.floor(Math.random() * this.length)];
 };
-if (!String.prototype.format) {
-    String.prototype.format = function () {
-        "use strict";
-        var args = arguments;
-        return this.replace(/\{(\d+)\}/g, function (match, number) {
-            return args[number] !== undefined
-                ? args[number]
-                : match;
-        });
-    };
-}
+Array.prototype.shuffle = function () {
+    "use strict";
+    var i = this.length, j, temp;
+    if (i === 0) {
+        return this;
+    }
+    while (i) {
+        j = Math.floor(Math.random() * (i + 1));
+        temp = this[i];
+        this[i] = this[j];
+        this[j] = temp;
+
+        i -= 1;
+    }
+    return this;
+};
+String.prototype.format = function () {
+    "use strict";
+    var args = arguments;
+    return this.replace(/\{(\d+)\}/g, function (match, number) {
+        return args[number] !== undefined
+            ? args[number]
+            : match;
+    });
+};
 
 var Game = {
     densities: [1, 2, 3],
@@ -145,7 +185,7 @@ var Game = {
 
         var type = Game.type.r();
 
-        console.log(type);
+        Game.current.type = type;
 
         if (type === 1) {
             if (Game.current.level === 1) {
@@ -186,5 +226,23 @@ var Game = {
         }
 
         return Game.current;
+    },
+
+    generate_different_option: function (option) {
+        "use strict";
+        var b = [Game.positions.r(), Game.densities.r()];
+        if (option.equals(b)) {
+            return Game.generate_different_option(option);
+        }
+        return b;
+    },
+
+    generate_answers: function () {
+        "use strict";
+        var ans = Game.current.answer;
+
+        if (Game.current.type === 1) {
+            // mcq
+        }
     }
 };
