@@ -29,7 +29,7 @@ var rows = 10,
 
 
 // create the wrecking ball
-var ball = Bodies.circle(400, 200, 50, { density: 0.0001, frictionAir: 0});
+var ball = Bodies.circle(400, 200, 20, { density: 0.0001, frictionAir: 0});
 
 // create the rope the ball will swing on
 var ballRope = Constraint.create({

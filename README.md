@@ -1,13 +1,14 @@
 physims
 =======
 
-Physics JS simulations for projects.
+ABANDONED: Incomplete Work. I may work on it in future, though, no plans for now.
 
-##Running tests:
-``$ git clone <this repository>``
+Physics JS simulations for Engineering Kitchen module at Cluster Innovation Centre, University of Delhi.
 
-``$ cd physims/tests``
+Implementations:
+ - Class I lever balancing "game". Quiz is generated randomly, with random values.
+ - Array prototypes: Array Equals
+ - Array prototypes: Choose random index from array
+ - Array prototypes: Shuffle the Array
+ - String prototype: Printf replacements.
 
-``$ node start.js``
-
-Goto localhost:8080 or 127.0.0.1:8080 to begin.
